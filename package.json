@@ -1,0 +1,30 @@
+{
+  "name": "pusheen",
+  "version": "0.0.1",
+  "description": "Push Notifications for iOS/Android",
+  "main": "pusheen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://Sirikon@github.com/Sirikon/pusheen.git"
+  },
+  "keywords": [
+    "push",
+    "notifications",
+    "ios",
+    "android"
+  ],
+  "author": "Sirikon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sirikon/pusheen/issues"
+  },
+  "homepage": "https://github.com/Sirikon/pusheen",
+  "dependencies": {
+    "apn": "1.6.2",
+    "node-gcm": "0.9.12",
+    "string": "2.0.1"
+  } 
+}
