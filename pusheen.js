@@ -8,6 +8,12 @@ var mongoose = null;
 var Schema = null;
 var Device = null;
 
+var Config = {};
+
+var config = function(data){
+	Config = data;
+}
+
 var validateMessage = function(message){
 	if(!message.title){
 		return false;
@@ -26,6 +32,28 @@ var init = function(_mongoose){
 	var DeviceSchema = new Schema({
 		token: {type: String, unique: true, index: true, required: true}
 	},{strict:false});
+
+	DeviceSchema.statics.getTokensByObject = function(o,callback){
+		var tokenList = [];
+		if( Array.isArray(o) ){
+			if( typeof(o[0]) == 'object' ){
+				for(var i in o){
+					tokenList.push(o[i].token);
+				}
+				callback(null,tokenList);
+			}else if( typeof(o[0]) == 'string' ){
+				tokenList = o;
+				callback(null,tokenList);
+			}
+		}else if( typeof(o) == 'string' ){
+			tokenList.push(o);
+			callback(null,tokenList);
+		}else if( typeof(o) == 'object' ){
+			Device.getTokensByFilter(o,function(err,docs){
+				callback(err,docs);
+			});
+		}
+	}
 
 	DeviceSchema.statics.getTokensByFilter = function(filter, callback){
 		Device.getDevicesByFilter(filter, function(err,docs){
@@ -47,12 +75,31 @@ var init = function(_mongoose){
 	module.exports.Device = Device;
 }
 
-var send = function(message,filter){
-	
+var sendGCM = function(message,tokens){
+	var sender = new gcm.Sender(Config.gcmkey);
+
+	message.title = S(message.title).stripTags().s.trim();
+	message.message = S(message.message).stripTags().s.trim();
+	var gcmmsg = new gcm.Message({
+		delayWhileIdle: true,
+		data: message
+	});
+	sender.send(gcmmsg, tokens, 2, function (err, result) {
+		if(err){ console.error(err); return; }
+		console.log(result);
+	});
+}
+
+var send = function(message,filterOrList){
+	if( !validateMessage(message) ){ return false; }
+	module.exports.Device.getTokensByObject(filterOrList, function(err,tokens){
+		sendGCM(message,tokens);
+	});
 }
 
 module.exports = {
 	init: init,
 	Device: Device,
-	send: send
+	send: send,
+	config: config
 }
