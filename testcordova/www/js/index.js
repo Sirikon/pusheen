@@ -17,11 +17,27 @@
  * under the License.
  */
 
+console.log('Yeah!');
+
 function log(text){
     console.log('LOG: ' + text);
     var cosa = document.createElement('li');
     cosa.textContent = text;
     document.getElementById('log').appendChild(cosa);
+}
+
+log('Start!');
+
+var successHandler = function(result){
+    log('Success!: ' + result);
+}
+
+var errorHandler = function(error){
+    log('Error: ' + error);
+}
+
+var tokenHandler = function(token){
+    log('Token!: ' + token);
 }
 
 var pushNotification = null;
@@ -44,15 +60,8 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
 
-        var successHandler = function(result){
-            log('Success!: ' + result);
-        }
-
-        var errorHandler = function(error){
-            log('Error: ' + error);
-        }
-
         pushNotification = window.plugins.pushNotification;
+
         if ( device.platform.toLowerCase() == 'android' ){
             log('Android!');
             pushNotification.register(successHandler,errorHandler,{
@@ -60,7 +69,13 @@ var app = {
                 "ecb":"onNotification"
             });
         } else {
-            log('Otro... y pasando');
+            log('iOS!');
+            pushNotification.register(tokenHandler,errorHandler,{
+                "badge":"true",
+                "sound":"true",
+                "alert":"true",
+                "ecb":"onNotificationAPN"
+            });
         }
     },
     // Update DOM on a Received Event
@@ -75,6 +90,22 @@ var app = {
         console.log('Received Event: ' + id);
     }
 };
+
+function onNotificationAPN(event){
+
+    log('onNotificationAPN');
+
+    if ( event.alert )
+    {
+        log(event.alert)
+    }
+
+    if ( event.badge )
+    {
+        log('Setting badge to: ' + event.badge);
+        pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
+    }
+}
 
 function onNotification(e) {
 
