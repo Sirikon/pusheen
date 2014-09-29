@@ -77,7 +77,6 @@ var app = {
 };
 
 function onNotification(e) {
-    log('Event Received: ' + e.event);
 
     switch( e.event ) {
 
@@ -85,13 +84,18 @@ function onNotification(e) {
             if ( e.regid.length > 0 )
             {
                 log(e.regid);
+                log('Sending data to server');
+                $.post('http://192.168.1.129:3000/devices', {token:'falsetoken1234',platform:'android',uuid:device.uuid,model:device.model,version:device.version},function(res){
+                    log('Register:' + res);
+                    console.log(res);
+                });
             }
         break;
 
         case 'message':
             if ( e.foreground )
             {
-                log('NEW FOREGROUND NOTIFICATION');
+                // log('NEW FOREGROUND NOTIFICATION');
             }
             else
             {
@@ -105,7 +109,7 @@ function onNotification(e) {
                 }
             }
 
-            log('Message: ' + e.payload.message);
+            log(e.payload.title+': '+ e.payload.message);
         break;
 
         case 'error':

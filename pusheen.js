@@ -97,9 +97,18 @@ var send = function(message,filterOrList){
 	});
 }
 
+var RegisterController = function(req,res){
+	var newDevice = new module.exports.Device(req.body);
+	newDevice.save(function(err){
+		if(err){ res.send(err); return; }
+		res.send('ok');
+	});
+}
+
 module.exports = {
 	init: init,
 	Device: Device,
 	send: send,
-	config: config
+	config: config,
+	RegisterController: RegisterController
 }
