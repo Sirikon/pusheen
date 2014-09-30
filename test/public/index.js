@@ -4,6 +4,10 @@ $(document).ready(function(){
 		$("#devices").html('');
 		$.getJSON('/devices', function(devices){
 			var newOption;
+			newOption = $(document.createElement('option'));
+			newOption.text("TODOS");
+			newOption.attr('value', '*');
+			$("#devices").append(newOption);
 			for(var i in devices){
 				newOption = $(document.createElement('option'));
 				newOption.text(devices[i].model + " ("+devices[i].platform+" "+devices[i].version+") " + devices[i].uuid);
