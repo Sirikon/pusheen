@@ -30,11 +30,25 @@ app.get('/removedevices', function(req,res){
 })
 
 app.post('/send', function(req,res){
-	pusheen.config({gcmkey: 'AIzaSyDrRgtPPDQrkY-Gs6s0lfg7jxN7-NsEwOg'});
-	pusheen.send({title:req.body.title,message:req.body.message},req.body.device);
+	pusheen.config({
+		gcmKey: 'AIzaSyDrRgtPPDQrkY-Gs6s0lfg7jxN7-NsEwOg',
+		apnDev: true,
+		apnCert: process.cwd() + '/test/cert.pem',
+		apnKey: process.cwd() + '/test/cert.pem'
+	});
+	if(req.body.device == '*'){
+		filter = {};
+	}else{
+		filter = req.body.device;
+	}
+	pusheen.send({
+		title:req.body.title,
+		message:req.body.message
+	},filter);
 	res.send('ok');
 })
 
 app.listen(3000);
 
+console.log('CWD: ' + process.cwd());
 console.log("Listening web server on port 3000");

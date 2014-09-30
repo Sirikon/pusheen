@@ -8,7 +8,12 @@ var mongoose = null;
 var Schema = null;
 var Device = null;
 
-var Config = {};
+var Config = {
+	gcmKey: '',
+	apnDev: '',
+	apnCert: new Buffer(0),
+	apnKey: new Buffer(0),
+};
 
 var config = function(data){
 	Config = data;
@@ -76,7 +81,7 @@ var init = function(_mongoose){
 }
 
 var sendGCM = function(message,tokens){
-	var sender = new gcm.Sender(Config.gcmkey);
+	var sender = new gcm.Sender(Config.gcmKey);
 
 	message.title = S(message.title).stripTags().s.trim();
 	message.message = S(message.message).stripTags().s.trim();
@@ -84,16 +89,35 @@ var sendGCM = function(message,tokens){
 		delayWhileIdle: true,
 		data: message
 	});
+
 	sender.send(gcmmsg, tokens, 2, function (err, result) {
 		if(err){ console.error(err); return; }
 		console.log(result);
 	});
 }
 
+var sendAPN = function(message,tokens){
+	var apnOptions = {
+		cert: Config.apnCert,
+		key: Config.apnKey,
+		production: false
+	}
+	var apnConnection = apn.Connection(apnOptions);
+
+	var note = new apn.Notification();
+
+	note.alert = message.title;
+	note.payload = message;
+
+	apnConnection.pushNotification(note, tokens);
+
+}
+
 var send = function(message,filterOrList){
 	if( !validateMessage(message) ){ return false; }
 	module.exports.Device.getTokensByObject(filterOrList, function(err,tokens){
 		sendGCM(message,tokens);
+		sendAPN(message,tokens);
 	});
 }
 
