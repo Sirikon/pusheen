@@ -107,6 +107,7 @@ var sendAPN = function(message,tokens){
 	var note = new apn.Notification();
 
 	note.alert = message.title;
+	note.sound = "ping.aiff";
 	note.payload = message;
 
 	apnConnection.pushNotification(note, tokens);
