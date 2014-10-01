@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var express = require('express');
 var bodyParser = require('body-parser');
 var pusheen = require('../pusheen.js');
+var fs = require('fs');
+
 mongoose.connect('mongodb://localhost/testpusheen');
 pusheen.init(mongoose);
 
@@ -31,7 +33,7 @@ app.get('/removedevices', function(req,res){
 
 app.post('/send', function(req,res){
 	pusheen.config({
-		gcmKey: 'AIzaSyDrRgtPPDQrkY-Gs6s0lfg7jxN7-NsEwOg',
+		gcmKey: fs.readFileSync(process.cwd() + '/test/gcmKey.txt'),
 		apnDev: true,
 		apnCert: process.cwd() + '/test/cert.pem',
 		apnKey: process.cwd() + '/test/cert.pem'
