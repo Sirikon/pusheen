@@ -1,3 +1,4 @@
 node_modules/
 startcommands.js
 test/cert.pem
+test/gcmKey.txt
