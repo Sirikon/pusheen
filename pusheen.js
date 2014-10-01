@@ -10,7 +10,7 @@ var Device = null;
 
 var Config = {
 	gcmKey: '',
-	apnDev: '',
+	apnProd: '',
 	apnCert: new Buffer(0),
 	apnKey: new Buffer(0),
 };
@@ -100,7 +100,7 @@ var sendAPN = function(message,tokens){
 	var apnOptions = {
 		cert: Config.apnCert,
 		key: Config.apnKey,
-		production: false
+		production: Config.apnProd
 	}
 	var apnConnection = apn.Connection(apnOptions);
 

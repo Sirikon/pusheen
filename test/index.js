@@ -10,7 +10,7 @@ pusheen.init(mongoose);
 var app = new express();
 
 app.use(bodyParser.json({limit:'5mb'}));
-app.use(bodyParser.urlencoded({limit:'5mb'}));
+app.use(bodyParser.urlencoded({limit:'5mb', extended: true}));
 
 app.use('/static', express.static(__dirname + '/public'));
 
@@ -34,7 +34,7 @@ app.get('/removedevices', function(req,res){
 app.post('/send', function(req,res){
 	pusheen.config({
 		gcmKey: fs.readFileSync(process.cwd() + '/test/gcmKey.txt'),
-		apnDev: true,
+		apnProd: false,
 		apnCert: process.cwd() + '/test/cert.pem',
 		apnKey: process.cwd() + '/test/cert.pem'
 	});
@@ -48,9 +48,8 @@ app.post('/send', function(req,res){
 		message:req.body.message
 	},filter);
 	res.send('ok');
-})
+});
 
 app.listen(3000);
 
-console.log('CWD: ' + process.cwd());
 console.log("Listening web server on port 3000");
